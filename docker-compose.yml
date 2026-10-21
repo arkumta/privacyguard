@@ -1,0 +1,24 @@
+
+services:
+  scanner:
+    platform: linux/amd64
+    build:
+      context: ./backend
+    container_name: privacyguard-scanner
+    ports:
+      - "8000:8000"
+    environment:
+      - MAX_SOURCE_BYTES=200000
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./frontend
+    container_name: privacyguard-web
+    ports:
+      - "3000:3000"
+    environment:
+      - SCANNER_API_URL=http://scanner:8000
+    depends_on:
+      - scanner
+    restart: unless-stopped
